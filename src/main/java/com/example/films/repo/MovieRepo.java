@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MovieRepo extends JpaRepository<MovieModel, Long>  {
     MovieModel findByTitle(String title);
+    MovieModel findByIdIMDB(String idIMDB);
 }

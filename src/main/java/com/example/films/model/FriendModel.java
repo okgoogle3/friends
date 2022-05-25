@@ -60,4 +60,7 @@ public class FriendModel{
     public void setMovies(Set<MovieModel> movies) {
         this.movies = movies;
     }
+    public void addMovies(Set<MovieModel> movies) {
+        this.movies.addAll(movies);
+    }
 }

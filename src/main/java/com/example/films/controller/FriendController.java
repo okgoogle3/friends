@@ -40,7 +40,7 @@ public class FriendController {
     }
 
     @GetMapping("/{id}/rating")
-    public ResponseEntity<Double> getFriendRatingById(@PathVariable long id) throws Exception{
+    public ResponseEntity<String> getFriendRatingById(@PathVariable long id) throws Exception{
         try{
             return ResponseEntity.ok(friendService.getFriendRating(id));
         }catch (Exception e){
@@ -48,8 +48,9 @@ public class FriendController {
         }
     }
 
+
     @GetMapping("/rating")
-    public ResponseEntity<List<Double>> getAllFriendsRating() throws Exception{
+    public ResponseEntity<List<String>> getAllFriendsRating() throws Exception{
         try{
             return ResponseEntity.ok(friendService.getAllFriendsRating());
         }catch (Exception e){
@@ -64,6 +65,15 @@ public class FriendController {
         Set<MovieDTO> movies = friendDTO.getMovies();
 
         return ResponseEntity.ok(friendService.addFriend(username, movies));
+
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateFriend(@PathVariable long id, @RequestBody FriendDTO friendDTO) throws Exception {
+        String username = friendDTO.getUsername();
+        Set<MovieDTO> movies = friendDTO.getMovies();
+        friendService.updateFriend(id, username, movies);
+        return ResponseEntity.ok().build();
 
     }
 }

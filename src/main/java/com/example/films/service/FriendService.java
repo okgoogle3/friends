@@ -84,7 +84,7 @@ public class FriendService {
         else throw new Exception();
     }
 
-    public double getFriendRating(long id) throws Exception {
+    public String getFriendRating(long id) throws Exception {
         final Optional<FriendModel> maybeFriend = friendRepo.findById(id);
         if (maybeFriend.isPresent()) {
             Set<MovieModel> movies = maybeFriend.get().getMovies();
@@ -97,14 +97,14 @@ public class FriendService {
                 JsonNode jsonNode = objectMapper.readTree(result);
                 sum += jsonNode.get("imdbRating").asDouble();
             }
-            return sum/movies.size();
+            return maybeFriend.get().getUsername() + " - " + sum/movies.size();
         }
         else throw new Exception();
     }
 
-    public List<Double> getAllFriendsRating() throws Exception {
+    public List<String> getAllFriendsRating() throws Exception {
         final List<FriendModel> friends = friendRepo.findAll();
-        List<Double> ratings = new ArrayList<>();
+        List<String> ratings = new ArrayList<>();
         for (FriendModel friend : friends) {
             Set<MovieModel> movies = friend.getMovies();
             RestTemplate restTemplate = new RestTemplate();
@@ -116,8 +116,21 @@ public class FriendService {
                 JsonNode jsonNode = objectMapper.readTree(result);
                 sum += jsonNode.get("imdbRating").asDouble();
             }
-            ratings.add(sum/movies.size());
+            ratings.add(friend.getUsername() + " - " + sum/movies.size());
         }
         return ratings;
     }
+
+    public void updateFriend (long id, String username, Set<MovieDTO> movies) throws Exception {
+        if (friendRepo.findById(id).isEmpty()) throw new Exception();
+        FriendModel friend = friendRepo.findById(id).get();
+        if (username != null)  friend.setUsername(username);
+        if (!movies.isEmpty()) {
+            Set<MovieModel> movieModels = new HashSet<>();
+            for (MovieDTO movieDto : movies) movieModels.add(movieRepo.findByIdIMDB(movieDto.getIdIMDB()));
+            friend.addMovies(movieModels);
+        }
+        friendRepo.save(friend);
+    }
+
 }
