@@ -38,59 +38,32 @@ public class FriendController {
             return ResponseEntity.notFound().build();
         }
     }
-    /*
+
     @GetMapping("/{id}/rating")
-    public ResponseEntity<List<FriendModel>> getAllFriends() {
-        List<FriendModel> friends = friendService.getAllFriends();
-        return ResponseEntity.ok(friends);
+    public ResponseEntity<Double> getFriendRatingById(@PathVariable long id) throws Exception{
+        try{
+            return ResponseEntity.ok(friendService.getFriendRating(id));
+        }catch (Exception e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/rating")
-    public ResponseEntity<List<FriendModel>> getAllFriends() {
-        List<FriendModel> friends = friendService.getAllFriends();
-        return ResponseEntity.ok(friends);
-    }
-    */
-
-    @PostMapping
-    public ResponseEntity<Void> addFriend(@RequestBody FriendDTO friendDTO) {
-        final String username = friendDTO.getUsername();
-        final Set<MovieDTO> movies = friendDTO.getMovies();
-
-        try {
-            movies.forEach(movieDTO -> {
-                final String idIMDB = movieDTO.getIdIMDB();
-                final String title = movieDTO.getTitle();
-                try {
-                    friendService.addMovie(idIMDB, title);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-
-            });
-        } catch (Exception e){
-            return ResponseEntity.badRequest().build();
-        }
-
-        try {
-            final long id = friendService.addFriend(username, movies);
-            String location = String.format("/friends/%d", id);
-            return ResponseEntity.created(URI.create(location)).build();
-        } catch (Exception e){
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<List<Double>> getAllFriendsRating() throws Exception{
+        try{
+            return ResponseEntity.ok(friendService.getAllFriendsRating());
+        }catch (Exception e){
+            return ResponseEntity.notFound().build();
         }
     }
 
+
     @PostMapping
-    public ResponseEntity<Void> addMovie(@RequestBody MovieDTO movieDTO) {
-        final String idIMDB = movieDTO.getIdIMDB();
-        final String title = movieDTO.getTitle();
-        try {
-            final long id = friendService.addMovie(idIMDB, title);
-            String location = String.format("/movies/%d", id);
-            return ResponseEntity.created(URI.create(location)).build();
-        } catch (Exception e){
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<Long> addFriend(@RequestBody FriendDTO friendDTO) throws Exception {
+        String username = friendDTO.getUsername();
+        Set<MovieDTO> movies = friendDTO.getMovies();
+
+        return ResponseEntity.ok(friendService.addFriend(username, movies));
+
     }
 }

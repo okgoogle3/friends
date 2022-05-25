@@ -14,6 +14,7 @@ import javax.persistence.*;
 @Table(name = "movies")
 public class MovieModel{
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String idIMDB;
